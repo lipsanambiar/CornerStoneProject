@@ -1,0 +1,57 @@
+version: '3'
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.12.0
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - esdata:/usr/share/elasticsearch/data
+    networks:
+      - elk-network
+
+  apm-server:
+    image: docker.elastic.co/apm/apm-server:7.12.0
+    environment:
+      - ELASTIC_APM_SERVER_URL=http://elasticsearch:9200
+      - ELASTIC_APM_SECRET_TOKEN=apm-secret-token
+    ports:
+      - "8200:8200"
+    networks:
+      - elk-network
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.12.0
+    environment:
+      - LS_JAVA_OPTS=-Xmx256m
+      - XPACK_MONITORING_ENABLED=true
+    volumes:
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+    networks:
+      - elk-network
+      - apm-network
+    depends_on:
+      - elasticsearch
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.12.0
+    ports:
+      - "5601:5601"
+    networks:
+      - elk-network
+    depends_on:
+      - elasticsearch
+
+volumes:
+  esdata:
+
+networks:
+  elk-network:
+    driver: bridge
+  apm-network:
+    driver: bridge
