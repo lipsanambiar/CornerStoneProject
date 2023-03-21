@@ -1,5 +1,5 @@
 resource "aws_iam_role" "nodes" {
-  name = "eks-node-group-nodes"
+  name = "eks-node-group-nodes1"
 
   assume_role_policy = jsonencode({
     Statement = [{
@@ -34,7 +34,7 @@ resource "aws_eks_node_group" "private-nodes" {
   node_role_arn   = aws_iam_role.nodes.arn
 
   subnet_ids = [
-    aws_subnet.private-us-west-1a.id,
+    aws_subnet.private-us-west-1c.id,
     aws_subnet.private-us-west-1b.id
   ]
 
@@ -55,16 +55,6 @@ resource "aws_eks_node_group" "private-nodes" {
     role = "general"
   }
 
-  # taint {
-  #   key    = "team"
-  #   value  = "devops"
-  #   effect = "NO_SCHEDULE"
-  # }
-
-  # launch_template {
-  #   name    = aws_launch_template.eks-with-disks.name
-  #   version = aws_launch_template.eks-with-disks.latest_version
-  # }
 
   depends_on = [
     aws_iam_role_policy_attachment.nodes-AmazonEKSWorkerNodePolicy,
@@ -72,18 +62,3 @@ resource "aws_eks_node_group" "private-nodes" {
     aws_iam_role_policy_attachment.nodes-AmazonEC2ContainerRegistryReadOnly,
   ]
 }
-
-# resource "aws_launch_template" "eks-with-disks" {
-#   name = "eks-with-disks"
-
-#   key_name = "local-provisioner"
-
-#   block_device_mappings {
-#     device_name = "/dev/xvdb"
-
-#     ebs {
-#       volume_size = 50
-#       volume_type = "gp2"
-#     }
-#   }
-# }
