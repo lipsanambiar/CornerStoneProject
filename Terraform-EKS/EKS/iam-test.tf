@@ -21,8 +21,8 @@ resource "aws_iam_role" "test_oidc" {
   name               = "test-oidc"
 }
 
-resource "aws_iam_policy" "test-policy" {
-  name = "test-policy"
+resource "aws_iam_policy" "test-policy1" {
+  name = "test-policy1"
 
   policy = jsonencode({
     Statement = [{
@@ -39,7 +39,7 @@ resource "aws_iam_policy" "test-policy" {
 
 resource "aws_iam_role_policy_attachment" "test_attach" {
   role       = aws_iam_role.test_oidc.name
-  policy_arn = aws_iam_policy.test-policy.arn
+  policy_arn = aws_iam_policy.test-policy1.arn
 }
 
 output "test_policy_arn" {
