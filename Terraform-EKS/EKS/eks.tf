@@ -1,5 +1,5 @@
 resource "aws_iam_role" "demo" {
-  name = "eks-cluster-demo"
+  name = "eks-cluster-demo1"
 
   assume_role_policy = <<POLICY
 {
@@ -28,9 +28,9 @@ resource "aws_eks_cluster" "demo" {
 
   vpc_config {
     subnet_ids = [
-      aws_subnet.private-us-west-1a.id,
+      aws_subnet.private-us-west-1c.id,
       aws_subnet.private-us-west-1b.id,
-      aws_subnet.public-us-west-1a.id,
+      aws_subnet.public-us-west-1c.id,
       aws_subnet.public-us-west-1b.id
     ]
   }
